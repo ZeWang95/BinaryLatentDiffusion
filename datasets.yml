@@ -1,0 +1,12 @@
+- dataset: churches
+  path: "/data/dataset/lsun/lsun/scenes"
+- dataset: bedrooms
+  path: "/data/dataset/lsun/lsun/scenes"
+- dataset: ffhq
+  path: "/datasets/FFHQ"
+- dataset: celeba
+  path: "/datasets/FFHQ"
+- dataset: imagenet
+  path: "/data/datasets/FFHQ"
+- dataset: laion-art
+  path: "/data/datasets/laion/art/laion-high-resolution"
