@@ -19,15 +19,23 @@ The downloaded [CLIP](https://github.com/openai/CLIP) models should be placed un
 Here are some examples:
 
 Promt: A watercolor painting of lion
+
 `--omega 10.0 --temp 1.0`
+
 ![test_img](figs/a_watercolor_painting_of_lion.jpg)
 
+---
+
 The generation can be accelerated by skipping denoising steps:
+
 Promt: A watercolor painting of lion
+
 `--omega 10.0 --temp 0.8 --sample_steps 16`
 ![test_img](figs/A_watercolor_painting_of_lion_s16.jpg)
 
+---
 
 Promt: A huge meta castle
+
 `--omega 10.0 --temp 1.0`
 ![test_img](figs/a_huge_metal_castle.jpg)
