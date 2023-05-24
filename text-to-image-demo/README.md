@@ -7,4 +7,4 @@ This model was trained using a small (~11M) subset of LAION with high aesthetic 
 We are currently training a larger model with more data and cross attention (text -> image) layers. 
 
 
-![test_img](text-to-image-demo/figs/a_huge_metal_castle.jpg)
+![test_img](figs/a_huge_metal_castle.jpg)
