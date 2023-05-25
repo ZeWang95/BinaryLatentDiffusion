@@ -223,7 +223,7 @@ def get_data_loaders(
 ):
 
 
-    if dataset_name in ['bedrooms', 'churches']:
+    if dataset_name in ['bedrooms', 'churches', 'custom']:
         train_dataset, val_dataset = get_datasets(
             dataset_name,
             img_size,

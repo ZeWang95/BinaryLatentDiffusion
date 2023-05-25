@@ -115,6 +115,23 @@ class HparamsBinaryAE(HparamsBase):
             self.nf = 128
             self.perceptual_weight = 1.0
             self.res_blocks = 2
+        
+        if self.dataset == 'custom':
+            self.attn_resolutions = [16]
+            self.batch_size = 3
+            self.ch_mult = [1, 1, 2, 2, 4]
+            self.codebook_size = 1024
+            self.disc_layers = 3
+            self.disc_weight_max = 1
+            self.disc_start_step = 30001
+            self.emb_dim = 256
+            self.img_size = 256
+            self.latent_shape = [1, 16, 16]
+            self.n_channels = 3
+            self.ndf = 64
+            self.nf = 128
+            self.perceptual_weight = 1.0
+            self.res_blocks = 2
 
         else:
             raise KeyError(f'Defaults not defined for VQGAN model on dataset: {self.dataset}')

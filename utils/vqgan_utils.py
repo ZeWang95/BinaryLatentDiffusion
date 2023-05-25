@@ -72,6 +72,29 @@ def load_vqgan_from_checkpoint(H, vqgan, optim, disc_optim, ema_vqgan):
         train_stats = None
     return vqgan, optim, disc_optim, ema_vqgan, train_stats
 
+def load_binaryae_from_checkpoint(H, binaryae, optim, disc_optim, ema_binaryae):
+    try:
+        binaryae.module = load_model(binaryae.module, "binaryae", H.load_step, H.load_dir, strict=True, device=binaryae.device).cuda()
+    except:
+        binaryae.module = load_model(binaryae.module, "binaryae_ema", H.load_step, H.load_dir, strict=True, device=binaryae.device).cuda()
+    if H.load_optim:
+        optim = load_model(optim, "ae_optim", H.load_step, H.load_dir, strict=True, device=binaryae.device)
+        disc_optim = load_model(disc_optim, "disc_optim", H.load_step, H.load_dir, strict=True, device=binaryae.device)
+
+    if H.ema:
+        try:
+            ema_binaryae = load_model(ema_binaryae, "binaryae_ema", H.load_step, H.load_dir, strict=True, device=binaryae.device)
+        except FileNotFoundError:
+            log("No EMA model found, starting EMA from model load point", level="warning")
+            ema_binaryae = copy.deepcopy(binaryae)
+
+    # return none if no associated saved stats
+    try:
+        train_stats = load_stats(H, H.load_step)
+    except FileNotFoundError:
+        log("No stats file found - starting stats from load step.")
+        train_stats = None
+    return binaryae, optim, disc_optim, ema_binaryae, train_stats
 
 def calc_FID(H, model):
     # generate_recons(H, model)
