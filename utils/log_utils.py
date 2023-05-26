@@ -146,12 +146,18 @@ def save_images(images, im_name, step, log_dir, save_individually=False, name='i
                     plot=None, description=f"{log_dir}/{im_name}_{step:09}.jpg")
 
 def save_results(images, im_name, step, log_dir, temp, save_individually=False):
-    # log_dir = "logs/" + log_dir + "/images"
-    log_dir = os.path.join(log_dir, f'results_{temp}')
+    log_dir = os.path.join(log_dir, f'results')
     os.makedirs(log_dir, exist_ok=True)
     if save_individually:
         for idx in range(len(images)):
-            torchvision.utils.save_image(torch.clamp(images[idx], 0, 1), f"{log_dir}/{im_name}_r{dist.get_rank()}_{step}_{idx}.jpg")
+            torchvision.utils.save_image(torch.clamp(images[idx], 0, 1), f"{log_dir}/{im_name}_{temp}_{step}_{idx}.jpg")
+    else:
+        torchvision.utils.save_image(
+            torch.clamp(images, 0, 1),
+            f"{log_dir}/{im_name}_{temp}_{step}.jpg",
+            nrow=10,
+            padding=2
+        )
 
 def save_results_all(images, im_name, step, log_dir, temp, save_individually=False):
     # log_dir = "logs/" + log_dir + "/images"

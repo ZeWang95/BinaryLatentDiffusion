@@ -116,7 +116,7 @@ class HparamsBinaryAE(HparamsBase):
             self.perceptual_weight = 1.0
             self.res_blocks = 2
         
-        if self.dataset == 'custom':
+        elif self.dataset == 'custom':
             self.attn_resolutions = [16]
             self.batch_size = 3
             self.ch_mult = [1, 1, 2, 2, 4]
@@ -134,7 +134,7 @@ class HparamsBinaryAE(HparamsBase):
             self.res_blocks = 2
 
         else:
-            raise KeyError(f'Defaults not defined for VQGAN model on dataset: {self.dataset}')
+            raise KeyError(f'Defaults not defined for BinaryAE model on dataset: {self.dataset}')
 
 
 def add_vqgan_args(parser):

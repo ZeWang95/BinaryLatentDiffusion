@@ -3,13 +3,13 @@
 
 In the original paper, we used a dedicated binary autoencoder trained specifically for each experiment. To promote more general usage, we now release two binary autoencoders trained using over 600M images from the [LAION](https://laion.ai/projects/) dataset.
 
-- C64
+- **C64**
 The 64-latent-channel binary autoencoder can be downloaded [here](https://drive.google.com/drive/folders/1CFlixXLnEHZ0jaRLXLS4d_bJMZwG-Iih?usp=sharing). It represents a 256x256 image as a 16x16x64 binary tensor. 
 
-- C128
+- **C128**
 The 128-latent-channel binary autoencoder can be downloaded [here](https://drive.google.com/drive/folders/1rlWjd5iDOydTrxJyfvLZ8oDogRB3HiMe?usp=sharing). It represents a 256x256 image as a 16x16x128 binary tensor. 
 
-The C64 binary autoencoder should be able to reconstruct any images with a fair quality. The C128 one offers a better reconstruction quality but pose additional challenges for the training of the diffusiuon sampler. 
+The C64 binary autoencoder should be able to reconstruct any images with fair quality. The C128 one offers a better reconstruction quality but poses additional challenges for the training of the diffusion sampler. 
 
 If you would like to train your own binary autoencoder, you can try running:
 ```

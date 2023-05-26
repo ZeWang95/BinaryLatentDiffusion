@@ -64,10 +64,6 @@ class BinaryDiffusion(Sampler):
 
 
         if self.p_flip:
-            if self.ee:
-                ds = x_0_hat_logits.shape[0] // x_0.shape[0]
-                x_t_in = x_t_in.repeat(ds, 1, 1)
-                x_0 = x_0.repeat(ds, 1, 1)
             if self.focal >= 0:
                 x_0_ = torch.logical_xor(x_0, x_t_in)*1.0
                 kl_loss = focal_loss(x_0_hat_logits, x_0_, gamma=self.focal)
@@ -132,7 +128,7 @@ class BinaryDiffusion(Sampler):
             aux_loss = (weight * aux_loss).mean()
             loss = self.aux * aux_loss + loss
 
-        stats = {'loss': loss, 'vb_loss': kl_loss, 'acc': acc}
+        stats = {'loss': loss, 'bce_loss': kl_loss, 'acc': acc}
 
         if self.aux > 0:
             stats['aux loss'] = aux_loss
@@ -167,7 +163,6 @@ class BinaryDiffusion(Sampler):
         
         sampling_steps = sampling_steps[::-1]
 
-        depth = [None] * len(sampling_steps)
 
         for i, t in enumerate(sampling_steps):
             t = torch.full((b,), t, device=device, dtype=torch.long)
@@ -181,7 +176,7 @@ class BinaryDiffusion(Sampler):
 
                     x_0_logits = (1 + guidance) * x_0_logits - guidance * x_0_logits_uncond
             else:
-                x_0_logits = self._denoise_fn(x_t, time_steps=t-1, ee_step=depth[i])
+                x_0_logits = self._denoise_fn(x_t, time_steps=t-1)
                 x_0_logits = x_0_logits / temp
                 # scale by temperature
 

@@ -18,7 +18,7 @@ class HparamsBianryLatent(HparamsBase):
         self.grad_norm = 0.0
         self.drop_path = 0.0
         self.p_flip = False
-        self.focal = -1
+        self.focal = 0
         self.aux = 0.0 # better numerical statbility
         self.norm_first = False
         self.use_softmax = False
@@ -37,12 +37,14 @@ class HparamsBianryLatent(HparamsBase):
         self.reset_step = False
 
         self.init_scale = 0
+        self.optim_eps = 1e-8
+        self.reset_scaler = False
         
         super().__init__(dataset)
-        if self.dataset == "churches" or self.dataset == "bedrooms":
+        if self.dataset == "churches" or self.dataset == "bedrooms" or self.dataset == "custom":
             self.batch_size = 128
-            self.bert_n_emb = 512
-            self.bert_n_head = 8
+            self.bert_n_emb = 768
+            self.bert_n_head = 12
             self.bert_n_layers = 24
             self.block_size = 256
             self.lr = 2e-4
@@ -50,8 +52,8 @@ class HparamsBianryLatent(HparamsBase):
         
         elif self.dataset.startswith("laion"):
             self.batch_size = 128
-            self.bert_n_emb = 512
-            self.bert_n_head = 8
+            self.bert_n_emb = 768
+            self.bert_n_head = 12
             self.bert_n_layers = 24
             self.block_size = 256
             self.lr = 2e-4
@@ -60,7 +62,7 @@ class HparamsBianryLatent(HparamsBase):
         
 
         else:
-            raise KeyError(f"Defaults not defined for multinomial diffusion model on dataset: {self.dataset}")
+            raise KeyError(f"Defaults not defined for Bernoulli diffusion model on dataset: {self.dataset}")
 
 
 # arguments for all sampler models
@@ -106,3 +108,5 @@ def add_sampler_args(parser):
     parser.add_argument("--use_gcc", action="store_true")
     parser.add_argument("--reset_step", action="store_true")
     parser.add_argument("--init_scale", type=float)
+    parser.add_argument('--optim_eps', type=float)
+    parser.add_argument("--reset_scaler", action="store_true")

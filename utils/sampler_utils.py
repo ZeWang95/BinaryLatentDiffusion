@@ -73,6 +73,40 @@ def get_samples_temp(H, generator, sampler, x=None, ee=False):
 
     return images
 
+@torch.no_grad()
+def get_samples_test(H, generator, sampler, x=None, t=1.0, n_samples=20, return_all=False, label=None, mask=None, guidance=None):
+    generator.eval()
+    sampler.eval()
+    latents = sampler.sample(sample_steps=H.sample_steps, temp=t, b=n_samples, return_all=return_all, label=label, mask=mask, guidance=guidance)
+    
+
+    if mask is not None:
+        latents = torch.cat([mask['latent'].unsqueeze(0), latents], 0)
+
+    with torch.cuda.amp.autocast():
+        size = min(25, latents.shape[0])
+        if H.latent_shape[-1] == 32:
+            size = 5
+        images = []
+        for i in range(len(latents)//size):
+            latent = latents[i*size : (i+1)*size]
+
+            latent = (latent * 1.0) 
+
+            if H.use_tanh:
+                latent = (latent - 0.5) * 2.0
+            # latents = latents / (latents.sum(dim=-1, keepdim=True)+1e-6)
+            if not H.norm_first:
+                latent = latent / float(H.codebook_size)
+            latent = latent @ sampler.embedding_weight
+
+            latent = latent.permute(0,2,1)
+            latent = latent.reshape(*latent.shape[:-1], H.latent_shape[1], H.latent_shape[2])
+            img = generator(latent.float())
+            images.append(img)
+        images = torch.cat(images, 0)
+
+    return images
 
 @torch.no_grad()
 def get_samples_guidance(H, generator, sampler, x=None):
@@ -256,7 +290,46 @@ def get_t2i_samples_guidance_test(H, generator, sampler, label, x=None, g=None, 
     else:
         return images
 
+@torch.no_grad()
+def get_online_samples_guidance(H, generator, sampler, x=None,):
 
+    if x is None:
+        latents_all = []
+
+        sampler.eval()
+
+        print('Sampling')
+        for g in [None, 1.0, 2.0, 5.0, 10.0]:
+            for t in [0.5, 0.9]:
+                latents = sampler.sample(sample_steps=H.sample_steps, temp=t, guidance=g)
+                latents_all.append(latents)
+                # print('done')
+        latents = torch.cat(latents_all, dim=0)
+        sampler.train()
+    else:
+        latents = x
+
+    print('Sampling done')
+
+    with torch.cuda.amp.autocast():
+        size = min(5, latents.shape[0])
+        images = []
+        for i in range(len(latents)//size):
+            latent = latents[i*size : (i+1)*size]
+
+            latent = (latent * 1.0) 
+
+            if H.use_tanh:
+                latent = (latent - 0.5) * 2.0
+            if not H.norm_first:
+                latent = latent / float(H.codebook_size)
+            latent = latent.permute(0,2,1)
+            latent = latent.reshape(*latent.shape[:-1], H.latent_shape[1], H.latent_shape[2])
+            img, _, _ = generator(None, code=latent.float())
+            images.append(img)
+        images = torch.cat(images, 0)
+
+    return images
 
 def get_samples_idx(H, generator, sampler, idx):
 
