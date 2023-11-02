@@ -67,9 +67,9 @@ class BinaryDiffusion(Sampler):
             if self.focal >= 0:
                 x_0_ = torch.logical_xor(x_0, x_t_in)*1.0
                 kl_loss = focal_loss(x_0_hat_logits, x_0_, gamma=self.focal)
-                x_0_hat_logits = x_t_in * ( - x_0_hat_logits) + (1 - x_t_in) * x_0_hat_logits
+                x_0_hat_logits = x_t_in * (1 - x_0_hat_logits) + (1 - x_t_in) * x_0_hat_logits
             else:
-                x_0_hat_logits = x_t_in * ( - x_0_hat_logits) + (1 - x_t_in) * x_0_hat_logits
+                x_0_hat_logits = x_t_in * (1 - x_0_hat_logits) + (1 - x_t_in) * x_0_hat_logits
                 kl_loss = F.binary_cross_entropy_with_logits(x_0_hat_logits, x_0, reduction='none')
 
         else:
